@@ -14,7 +14,7 @@ import retrofit2.http.Path;
 public interface APIInterface {
 
     @PUT("vegetables/updateVegetable/{vegetableId}")
-    Call<APIResponseVegList> updateVegetable(@Path("vegetableId") String vegetableId, @Body Vegetable vegetable);
+    Call<APIMessage> updateVegetable(@Path("vegetableId") String vegetableId, @Body Vegetable vegetable);
 
     @POST("vegetables/addVegetable")
     Call<APIResponseVegList> addVegetable(@Body Vegetable vegetable);

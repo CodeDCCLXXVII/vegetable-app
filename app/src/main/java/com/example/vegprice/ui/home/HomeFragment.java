@@ -1,11 +1,14 @@
 package com.example.vegprice.ui.home;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -28,13 +31,18 @@ public class HomeFragment extends Fragment {
     private HomeViewModel homeViewModel;
     public static List<Vegetable> vegetables;
     public static VegetablesAdapter vegetablesAdapter;
+    public static EditText vegNameEditTxt, vegPriceEditTxt;
+    public static Activity activity;
+    public static Context context;
+    public static AlertDialog dialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-
+        activity = getActivity();
+        context = getContext();
         RecyclerView rv = root.findViewById(R.id.listViewVegs);
         vegetables = new ArrayList<>();
         DataService.getVegetables(getContext());
@@ -48,4 +56,99 @@ public class HomeFragment extends Fragment {
         });
         return root;
     }
+
+
+    public static void updateUser(final Vegetable vegetable){
+
+        LayoutInflater factory = LayoutInflater.from(activity);
+
+        final View textEntryView = factory.inflate(R.layout.veg_alter, null);
+
+
+        vegNameEditTxt = textEntryView.findViewById(R.id.vegNameInput);
+        vegPriceEditTxt = textEntryView.findViewById(R.id.vegPriceInput);
+
+        vegNameEditTxt.setText(vegetable.getName());
+        vegPriceEditTxt.setText(String.valueOf(vegetable.getPrice()));
+
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+        alert.setCancelable(false);
+        alert.setIcon(R.drawable.ic_home_black_24dp).setTitle("Update Vegetable").setView(textEntryView).setPositiveButton("Submit",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+
+
+                        /* User clicked OK so do some stuff */
+
+                    }
+                }).setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                        /*
+                         * User clicked cancel so do some stuff
+                         */
+                    }
+                });
+        // alert.show();
+
+        dialog  = alert.create();
+        dialog.setCancelable(false);
+        dialog.show();
+
+
+        //Overriding the handler immediately after show is probably a better approach than OnShowListener as described below
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Boolean wantToCloseDialog = false;
+                //Do stuff, possibly set wantToCloseDialog to true then...
+                wantToCloseDialog = validateVegetableInput();
+
+                if(wantToCloseDialog) {
+
+                    vegetable.setName(vegNameEditTxt.getText().toString());
+                    vegetable.setPrice(Integer.valueOf(vegPriceEditTxt.getText().toString()));
+
+                    DataService.updateVegetable(context,"Updating Vegetable", "Submitting vegetable details. Please wait...", vegetable);
+                }
+            }
+        });
+
+
+    }
+
+    public static boolean validateVegetableInput(){
+
+        String name = vegNameEditTxt.getText().toString();
+        String  price = vegPriceEditTxt.getText().toString();
+
+        if(name.isEmpty() || name.length() < 3){
+
+            vegNameEditTxt.setError("Invalid name input");
+            vegNameEditTxt.requestFocus();
+            return  false;
+        }else
+            vegNameEditTxt.setError(null);
+
+        if(price.isEmpty()){
+
+            vegPriceEditTxt.setError("Invalid input");
+            vegPriceEditTxt.requestFocus();
+            return  false;
+        }else
+            vegPriceEditTxt.setError(null);
+
+        return true;
+
+    }
+
+
+
+
+
 }

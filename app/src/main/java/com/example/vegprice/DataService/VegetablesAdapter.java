@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.vegprice.R;
 import com.example.vegprice.pojo.Vegetable;
+import com.example.vegprice.ui.home.HomeFragment;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class VegetablesAdapter extends RecyclerView.Adapter<VegetablesAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull final VegetablesAdapter.ViewHolder holder, final int position) {
 
-        Vegetable vegetable = (Vegetable) vegetables.get(position);
+        final Vegetable vegetable = (Vegetable) vegetables.get(position);
 
         TextView vegName = holder.vegName;
         vegName.setText(vegetable.getName());
@@ -62,7 +63,7 @@ public class VegetablesAdapter extends RecyclerView.Adapter<VegetablesAdapter.Vi
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Clicked "+ position, Toast.LENGTH_LONG).show();
+                HomeFragment.updateUser(vegetable);
             }
         });
         ImageButton delBtn = holder.delBtn;

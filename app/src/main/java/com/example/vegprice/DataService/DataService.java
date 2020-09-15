@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.example.vegprice.R;
 import com.example.vegprice.network.APIClient;
 import com.example.vegprice.network.APIInterface;
+import com.example.vegprice.network.APIMessage;
 import com.example.vegprice.network.APIResponseVegList;
 import com.example.vegprice.pojo.Vegetable;
 import com.example.vegprice.ui.home.HomeFragment;
@@ -51,12 +52,9 @@ public class DataService {
                         for(int i = 0; i < fetchedVegs.size(); i++){
 
                             Vegetable tmp = new Vegetable(fetchedVegs.get(i).getName(), fetchedVegs.get(i).getPrice());
-
-                            Log.d("Veg", tmp.toString());
-
+                            tmp.setId(fetchedVegs.get(i).getId());
                             HomeFragment.vegetables.add(tmp);
                         }
-                        Log.d("List", HomeFragment.vegetables.toString());
                         HomeFragment.vegetablesAdapter.notifyDataSetChanged();
 
 
@@ -77,6 +75,47 @@ public class DataService {
             @Override
             public void onFailure(Call<APIResponseVegList> call, Throwable t) {
 
+                parseNetworkIssue(context, t.getMessage());
+
+            }
+        });
+
+    }
+
+
+
+    public static void updateVegetable(final Context context, String title, String sms, Vegetable vegetable){
+
+        invokeProgressBar(context, title, sms);
+
+        Call<APIMessage> apiResponseCall = apiInterface.updateVegetable(vegetable.getId(), vegetable);
+
+        apiResponseCall.enqueue(new Callback<APIMessage>() {
+            @Override
+            public void onResponse(Call<APIMessage> call, Response<APIMessage> response) {
+
+                progressDialog.dismiss();
+
+                if(response.isSuccessful()) {
+                    HomeFragment.dialog.dismiss();
+
+                    if(!response.body().getMessage().equalsIgnoreCase("success"))
+                        alert(context, response.body().getMessage(), response.body().getMessage());
+
+                    else{
+                        getVegetables(context);
+                    }
+
+                }
+
+                if(response.errorBody() !=null) {
+
+                    Toast.makeText(context, "Failed updating Vegetable"  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIMessage> call, Throwable t) {
                 parseNetworkIssue(context, t.getMessage());
 
             }
@@ -109,7 +148,7 @@ public class DataService {
         else if(message.contains("failed to connect"))
             alert(context,error, "Kindly check your internet connectivity and try again.");
         else
-            alert(context,error, "Network error, if this persists, kindly contact the admin");
+            alert(context,error, "Network error, if this persists, kindly contact the admin" + message);
 
     }
 
