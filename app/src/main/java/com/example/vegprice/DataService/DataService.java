@@ -160,6 +160,42 @@ public class DataService {
     }
 
 
+    public static void deleteVegetable(final Context context, String title, String sms, String vegetableId){
+
+        invokeProgressBar(context, title, sms);
+
+        Call<APIMessage> apiResponseCall = apiInterface.deleteVegetable(vegetableId);
+
+        apiResponseCall.enqueue(new Callback<APIMessage>() {
+            @Override
+            public void onResponse(Call<APIMessage> call, Response<APIMessage> response) {
+
+                progressDialog.dismiss();
+
+                if(response.isSuccessful()) {
+                    if(!response.body().getMessage().equalsIgnoreCase("success"))
+                        alert(context, response.body().getMessage(), response.body().getMessage());
+
+                    else{
+                        getVegetables(context);
+                    }
+                }
+                if(response.errorBody() !=null) {
+
+                    Toast.makeText(context, "Failed deleting Vegetable"  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIMessage> call, Throwable t) {
+                parseNetworkIssue(context, t.getMessage());
+
+            }
+        });
+
+    }
+
+
     public static void invokeProgressBar(Context context, String event, String sms) {
 
         progressDialog = new ProgressDialog(context, R.style.AppTheme_Dark_Dialog);

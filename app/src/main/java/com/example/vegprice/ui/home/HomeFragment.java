@@ -156,6 +156,36 @@ public class HomeFragment extends Fragment {
 
     }
 
+    public static void alertWithAction(String title, String message, final String actionSms, final String vegetableId) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context, R.style.AppTheme_Dark_Dialog);
+        alertDialogBuilder.setMessage(message)
+                .setTitle(title)
+                .setIcon(R.mipmap.ic_launcher)
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        if(actionSms.equalsIgnoreCase("delete"))
+                        {
+                            DataService.deleteVegetable(context, "Deleting Vegetable", "Submitting deletion request, Please wait ...", vegetableId);
+
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+
+
+    }
+
     public static boolean validateVegetableInput(){
 
         String name = vegNameEditTxt.getText().toString();

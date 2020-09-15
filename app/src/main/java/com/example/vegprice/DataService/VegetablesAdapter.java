@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vegprice.R;
 import com.example.vegprice.pojo.Vegetable;
@@ -70,7 +69,7 @@ public class VegetablesAdapter extends RecyclerView.Adapter<VegetablesAdapter.Vi
         delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HomeFragment.addVegetable();
+                HomeFragment.alertWithAction("Delete Vegetable", "Are you sure you want to delete the vegetable?", "delete", vegetable.getId());
             }
         });
 
