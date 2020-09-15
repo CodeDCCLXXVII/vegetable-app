@@ -22,6 +22,7 @@ import com.example.vegprice.DataService.DataService;
 import com.example.vegprice.DataService.VegetablesAdapter;
 import com.example.vegprice.R;
 import com.example.vegprice.pojo.Vegetable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class HomeFragment extends Fragment {
     public static Activity activity;
     public static Context context;
     public static AlertDialog dialog;
+    private FloatingActionButton addVeg;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,24 +56,26 @@ public class HomeFragment extends Fragment {
             public void onChanged(@Nullable String s) {
             }
         });
+
+        addVeg = root.findViewById(R.id.addVeg);
+        addVeg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addVegetable();
+            }
+        });
         return root;
     }
 
 
-    public static void updateUser(final Vegetable vegetable){
+    public static void updateVegetable(final Vegetable vegetable){
 
         LayoutInflater factory = LayoutInflater.from(activity);
-
         final View textEntryView = factory.inflate(R.layout.veg_alter, null);
-
-
         vegNameEditTxt = textEntryView.findViewById(R.id.vegNameInput);
         vegPriceEditTxt = textEntryView.findViewById(R.id.vegPriceInput);
-
         vegNameEditTxt.setText(vegetable.getName());
         vegPriceEditTxt.setText(String.valueOf(vegetable.getPrice()));
-
-
         final AlertDialog.Builder alert = new AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
         alert.setCancelable(false);
         alert.setIcon(R.drawable.ic_home_black_24dp).setTitle("Update Vegetable").setView(textEntryView).setPositiveButton("Submit",
@@ -79,34 +83,22 @@ public class HomeFragment extends Fragment {
                     public void onClick(DialogInterface dialog,
                                         int whichButton) {
 
-
-                        /* User clicked OK so do some stuff */
-
                     }
                 }).setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int whichButton) {
-                        /*
-                         * User clicked cancel so do some stuff
-                         */
                     }
                 });
-        // alert.show();
-
         dialog  = alert.create();
         dialog.setCancelable(false);
         dialog.show();
-
-
-        //Overriding the handler immediately after show is probably a better approach than OnShowListener as described below
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
                 Boolean wantToCloseDialog = false;
-                //Do stuff, possibly set wantToCloseDialog to true then...
                 wantToCloseDialog = validateVegetableInput();
 
                 if(wantToCloseDialog) {
@@ -115,6 +107,48 @@ public class HomeFragment extends Fragment {
                     vegetable.setPrice(Integer.valueOf(vegPriceEditTxt.getText().toString()));
 
                     DataService.updateVegetable(context,"Updating Vegetable", "Submitting vegetable details. Please wait...", vegetable);
+                }
+            }
+        });
+    }
+
+
+    public static void addVegetable(){
+
+        LayoutInflater factory = LayoutInflater.from(activity);
+        final View textEntryView = factory.inflate(R.layout.veg_alter, null);
+        vegNameEditTxt = textEntryView.findViewById(R.id.vegNameInput);
+        vegPriceEditTxt = textEntryView.findViewById(R.id.vegPriceInput);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(activity,R.style.AppTheme_Dark_Dialog);
+        alert.setCancelable(false);
+        alert.setIcon(R.drawable.ic_home_black_24dp).setTitle("Add Vegetable").setView(textEntryView).setPositiveButton("Submit",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+
+                    }
+                }).setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int whichButton) {
+                    }
+                });
+        dialog  = alert.create();
+        dialog.setCancelable(false);
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Boolean wantToCloseDialog = false;
+                wantToCloseDialog = validateVegetableInput();
+
+                if(wantToCloseDialog) {
+                    Vegetable vegetable = new Vegetable();
+                    vegetable.setName(vegNameEditTxt.getText().toString());
+                    vegetable.setPrice(Integer.valueOf(vegPriceEditTxt.getText().toString()));
+                    DataService.addVegetable(context,"Add Vegetable", "Submitting vegetable details. Please wait...", vegetable);
                 }
             }
         });

@@ -66,15 +66,51 @@ public class DataService {
 
                     Toast.makeText(context, "Failed fetching Vegs"  , Toast.LENGTH_LONG).show();
 
-
-
-
                 }
             }
 
             @Override
             public void onFailure(Call<APIResponseVegList> call, Throwable t) {
 
+                parseNetworkIssue(context, t.getMessage());
+
+            }
+        });
+
+    }
+
+    public static void addVegetable(final Context context, String title, String sms, Vegetable vegetable){
+
+        invokeProgressBar(context, title, sms);
+
+        Call<APIMessage> apiResponseCall = apiInterface.addVegetable(vegetable);
+
+        apiResponseCall.enqueue(new Callback<APIMessage>() {
+            @Override
+            public void onResponse(Call<APIMessage> call, Response<APIMessage> response) {
+
+                progressDialog.dismiss();
+
+                if(response.isSuccessful()) {
+                    HomeFragment.dialog.dismiss();
+
+                    if(!response.body().getMessage().equalsIgnoreCase("success"))
+                        alert(context, response.body().getMessage(), response.body().getMessage());
+
+                    else{
+                        getVegetables(context);
+                    }
+
+                }
+
+                if(response.errorBody() !=null) {
+
+                    Toast.makeText(context, "Failed adding Vegetable"  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIMessage> call, Throwable t) {
                 parseNetworkIssue(context, t.getMessage());
 
             }

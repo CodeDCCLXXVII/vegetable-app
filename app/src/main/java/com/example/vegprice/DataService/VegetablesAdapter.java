@@ -63,14 +63,14 @@ public class VegetablesAdapter extends RecyclerView.Adapter<VegetablesAdapter.Vi
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HomeFragment.updateUser(vegetable);
+                HomeFragment.updateVegetable(vegetable);
             }
         });
         ImageButton delBtn = holder.delBtn;
         delBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Clicked "+ position, Toast.LENGTH_LONG).show();
+                HomeFragment.addVegetable();
             }
         });
 

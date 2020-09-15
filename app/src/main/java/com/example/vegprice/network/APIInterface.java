@@ -17,10 +17,10 @@ public interface APIInterface {
     Call<APIMessage> updateVegetable(@Path("vegetableId") String vegetableId, @Body Vegetable vegetable);
 
     @POST("vegetables/addVegetable")
-    Call<APIResponseVegList> addVegetable(@Body Vegetable vegetable);
+    Call<APIMessage> addVegetable(@Body Vegetable vegetable);
 
     @DELETE("vegetables/deleteVegetable/{vegetableId}")
-    Call<APIResponseVegList> deleteVegetable(@Path("vegetableId") String vegetableId);
+    Call<APIMessage> deleteVegetable(@Path("vegetableId") String vegetableId);
 
     @GET("vegetables/getall/{page}/{size}")
     Call<APIResponseVegList> getVegetables(@Path("page") int page, @Path("size") int size);
