@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,9 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.vegprice.DataService.DataService;
 import com.example.vegprice.DataService.TransactionsAdapter;
-import com.example.vegprice.DataService.VegetablesAdapter;
 import com.example.vegprice.R;
-import com.example.vegprice.pojo.Vegetable;
+import com.example.vegprice.pojo.Transaction;
 import com.example.vegprice.pojo.VegetableTrans;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,9 +38,10 @@ public class DashboardFragment extends Fragment {
     public static Context context;
     public static AlertDialog dialog;
     private FloatingActionButton addVegCost;
+    public static Transaction transaction;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+                             final ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
                 ViewModelProviders.of(this).get(DashboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
@@ -58,6 +59,18 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 calclVegetableCost();
+            }
+        });
+
+        Button generateReceipt = root.findViewById(R.id.generateReceipt);
+        generateReceipt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(transaction != null) {
+                    DataService.calcTotalTransactionCost(context, "Transaction cost", "Getting total cost calculation, please wait...", transaction.getId());
+                }
+                else
+                    DataService.alert(context, "No items calculated", "Calculate vegetable cost first");
             }
         });
 
@@ -107,6 +120,7 @@ public class DashboardFragment extends Fragment {
 
 
     }
+
 
     public static boolean validateVegetableInput(){
 

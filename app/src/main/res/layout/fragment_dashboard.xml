@@ -6,15 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="58dp"
+    android:orientation="vertical">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listViewTransItems"
         android:layout_width="match_parent"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="58dp"
+
         />
+    <Button
+        android:id="@+id/generateReceipt"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/colorAccent"
+        android:layout_weight="2"
+        android:layout_height="wrap_content"
+        android:text="Generate Receipt"
+        ></Button>
 
-
+</LinearLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addVegCost"
         android:layout_width="wrap_content"

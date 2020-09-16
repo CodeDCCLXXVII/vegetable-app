@@ -26,4 +26,7 @@ public interface APIInterface {
     @PUT("vegetables/calcVegetableCost/{vegetableId}")
     Call<APIResponseVegTransaction> calculateVegetableCost(@Path("vegetableId") String vegetableId, @Body TaskRequest taskRequest);
 
+    @GET("vegetables/calcTotalTransactionCost/{transactionId}")
+    Call<APIResponseVegTransaction> getTotalTransactionCost(@Path("transactionId") String transactionId);
+
 }

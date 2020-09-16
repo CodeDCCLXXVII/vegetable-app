@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.Toast;
 
+import com.example.vegprice.MainActivity;
 import com.example.vegprice.R;
 import com.example.vegprice.network.APIClient;
 import com.example.vegprice.network.APIInterface;
@@ -176,6 +177,8 @@ public class DataService {
         taskRequest.setVegName(vegetableTrans.getVegName());
         taskRequest.setVegPrice(vegetableTrans.getPrice());
         taskRequest.setVegQuantity(vegetableTrans.getQuantity());
+        if(DashboardFragment.transaction != null)
+            taskRequest.setTransactionId(DashboardFragment.transaction.getId());
 
         Call<APIResponseVegTransaction> apiResponseCall = apiInterface.calculateVegetableCost(vegetableTrans.getVegName(), taskRequest);
 
@@ -191,7 +194,8 @@ public class DataService {
                     alert(context, response.body().getMessage(), response.body().getMessage());
 
                 else{
-                     Transaction transaction = response.body().getMetadata();
+                    Transaction transaction = response.body().getMetadata();
+                    DashboardFragment.transaction = transaction;
                     for(int i = 0; i < transaction.getVegtableTransList().size(); i++){
 
                         VegetableTrans tmp = new VegetableTrans(
@@ -208,6 +212,45 @@ public class DataService {
                 if(response.errorBody() !=null) {
 
                     Toast.makeText(context, "Failed calculating Vegetable"  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIResponseVegTransaction> call, Throwable t) {
+                parseNetworkIssue(context, t.getMessage());
+
+            }
+        });
+
+    }
+
+
+    public static void calcTotalTransactionCost(final Context context, String title, String sms, String transactionId){
+
+        invokeProgressBar(context, title, sms);
+
+        Call<APIResponseVegTransaction> apiResponseCall = apiInterface.getTotalTransactionCost(transactionId);
+
+        apiResponseCall.enqueue(new Callback<APIResponseVegTransaction>() {
+            @Override
+            public void onResponse(Call<APIResponseVegTransaction> call, Response<APIResponseVegTransaction> response) {
+
+                progressDialog.dismiss();
+
+                DashboardFragment.vegetableTransList.clear();
+                DashboardFragment.dialog.dismiss();
+                if(!response.body().getMessage().equalsIgnoreCase("success"))
+                    alert(context, response.body().getMessage(), response.body().getMessage());
+
+                else{
+                    Transaction transaction = response.body().getMetadata();
+                    DashboardFragment.transaction = transaction;
+                    alert(context, "Transaction Receipt", formatReceipt(transaction));
+                }
+
+                if(response.errorBody() !=null) {
+
+                    Toast.makeText(context, "Failed calculating total transaction cost"  , Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -295,14 +338,36 @@ public class DataService {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        // activeAction(hour);
-                        //  mapFragment.getMapAsync(MapsActivity.this);
                     }
                 });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
 
 
+    }
+
+    public static String formatReceipt(Transaction transaction){
+        String receipt = "";
+
+        String s = String.format("%-10s%-10s%-10s%-10s\n", "Item", "Qty", "Price", "Amount");
+        String s1 = String.format("%-10s%-10s%-10s%-10s\n", "-----------", "-----------", "-----------", "-----------");
+        receipt = s + s1;
+        for(int i=0; i < transaction.getVegtableTransList().size(); i++){
+
+            receipt += String.format("%-10s%-10s%-10s%-10s\n",
+                    transaction.getVegtableTransList().get(i).getVegName(),
+                    String.valueOf(transaction.getVegtableTransList().get(i).getQuantity()),
+                    String.valueOf(transaction.getVegtableTransList().get(i).getPrice()),
+                    String.valueOf(transaction.getVegtableTransList().get(i).getSubTotal())
+                    );
+        }
+
+        receipt += String.format("%-10s%-10s%-10s%-10s\n", "-----------", "-----------", "-----------", "-----------");
+
+        receipt += String.format("%-20s%-20s\n\n", "Total Amount ", String.valueOf(transaction.getTotal()));
+
+        receipt += String.format("%-20s%-20s", "Served by ", MainActivity.USER);
+        return receipt;
     }
 
 }

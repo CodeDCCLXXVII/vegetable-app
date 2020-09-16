@@ -67,6 +67,7 @@ public class Transaction {
         return "Transaction{" +
                 "id='" + id + '\'' +
                 ", cashierId='" + cashierId + '\'' +
+                ", total=" + total +
                 ", vegtableTransList=" + vegtableTransList +
                 ", created=" + created +
                 ", lastUpdate=" + lastUpdate +
