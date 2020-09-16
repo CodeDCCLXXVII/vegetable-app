@@ -15,12 +15,12 @@ public class TaskRequest {
         this.id = id;
     }
 
-    public String getName() {
+    public String getVegName() {
         return vegName;
     }
 
-    public void setName(String name) {
-        this.vegName = name;
+    public void setVegName(String vegName) {
+        this.vegName = vegName;
     }
 
     public int getVegPrice() {
@@ -51,9 +51,9 @@ public class TaskRequest {
     public String toString() {
         return "TaskRequest{" +
                 "id='" + id + '\'' +
-                ", name='" + vegName + '\'' +
+                ", vegName='" + vegName + '\'' +
                 ", vegPrice=" + vegPrice +
-                ", vegQuantity='" + vegQuantity + '\'' +
+                ", vegQuantity=" + vegQuantity +
                 ", transactionId='" + transactionId + '\'' +
                 '}';
     }

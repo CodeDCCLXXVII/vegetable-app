@@ -83,7 +83,7 @@ public class DataService {
 
         invokeProgressBar(context, title, sms);
         TaskRequest taskRequest = new TaskRequest();
-        taskRequest.setName(vegetable.getName());
+        taskRequest.setVegName(vegetable.getName());
         taskRequest.setVegPrice(vegetable.getPrice());
         Call<APIMessage> apiResponseCall = apiInterface.addVegetable(taskRequest);
 
@@ -127,7 +127,7 @@ public class DataService {
         invokeProgressBar(context, title, sms);
 
         TaskRequest taskRequest = new TaskRequest();
-        taskRequest.setName(vegetable.getName());
+        taskRequest.setVegName(vegetable.getName());
         taskRequest.setVegPrice(vegetable.getPrice());
 
         Call<APIMessage> apiResponseCall = apiInterface.updateVegetable(vegetable.getId(), taskRequest);
