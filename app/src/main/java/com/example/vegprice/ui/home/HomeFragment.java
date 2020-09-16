@@ -51,11 +51,6 @@ public class HomeFragment extends Fragment {
         vegetablesAdapter = new VegetablesAdapter(vegetables, getContext());
         rv.setAdapter(vegetablesAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        homeViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-            }
-        });
 
         addVeg = root.findViewById(R.id.addVeg);
         addVeg.setOnClickListener(new View.OnClickListener() {

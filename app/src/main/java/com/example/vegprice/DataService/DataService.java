@@ -10,8 +10,12 @@ import com.example.vegprice.network.APIClient;
 import com.example.vegprice.network.APIInterface;
 import com.example.vegprice.network.APIMessage;
 import com.example.vegprice.network.APIResponseVegList;
+import com.example.vegprice.network.APIResponseVegTransaction;
 import com.example.vegprice.network.TaskRequest;
+import com.example.vegprice.pojo.Transaction;
 import com.example.vegprice.pojo.Vegetable;
+import com.example.vegprice.pojo.VegetableTrans;
+import com.example.vegprice.ui.dashboard.DashboardFragment;
 import com.example.vegprice.ui.home.HomeFragment;
 
 import java.util.List;
@@ -43,7 +47,6 @@ public class DataService {
                 if(response.isSuccessful()) {
 
                     HomeFragment.vegetables.clear();
-                    // productList = response.body()
                     if(response.body().getMessage() != null)
                         alert(context, response.body().getMessage(), response.body().getMessage());
 
@@ -140,7 +143,6 @@ public class DataService {
 
                 if(response.isSuccessful()) {
                     HomeFragment.dialog.dismiss();
-
                     if(!response.body().getMessage().equalsIgnoreCase("success"))
                         alert(context, response.body().getMessage(), response.body().getMessage());
 
@@ -158,6 +160,59 @@ public class DataService {
 
             @Override
             public void onFailure(Call<APIMessage> call, Throwable t) {
+                parseNetworkIssue(context, t.getMessage());
+
+            }
+        });
+
+    }
+
+
+    public static void calcVegetableCost(final Context context, String title, String sms, VegetableTrans vegetableTrans){
+
+        invokeProgressBar(context, title, sms);
+
+        TaskRequest taskRequest = new TaskRequest();
+        taskRequest.setVegName(vegetableTrans.getVegName());
+        taskRequest.setVegPrice(vegetableTrans.getPrice());
+        taskRequest.setVegQuantity(vegetableTrans.getQuantity());
+
+        Call<APIResponseVegTransaction> apiResponseCall = apiInterface.calculateVegetableCost(vegetableTrans.getVegName(), taskRequest);
+
+        apiResponseCall.enqueue(new Callback<APIResponseVegTransaction>() {
+            @Override
+            public void onResponse(Call<APIResponseVegTransaction> call, Response<APIResponseVegTransaction> response) {
+
+                progressDialog.dismiss();
+
+                DashboardFragment.vegetableTransList.clear();
+                DashboardFragment.dialog.dismiss();
+                if(!response.body().getMessage().equalsIgnoreCase("success"))
+                    alert(context, response.body().getMessage(), response.body().getMessage());
+
+                else{
+                     Transaction transaction = response.body().getMetadata();
+                    for(int i = 0; i < transaction.getVegtableTransList().size(); i++){
+
+                        VegetableTrans tmp = new VegetableTrans(
+                                transaction.getVegtableTransList().get(i).getVegName(),
+                                transaction.getVegtableTransList().get(i).getPrice(),
+                                transaction.getVegtableTransList().get(i).getQuantity(),
+                                transaction.getVegtableTransList().get(i).getSubTotal());
+                        DashboardFragment.vegetableTransList.add(tmp);
+                    }
+                    DashboardFragment.transactionsAdapter.notifyDataSetChanged();
+
+                }
+
+                if(response.errorBody() !=null) {
+
+                    Toast.makeText(context, "Failed calculating Vegetable"  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIResponseVegTransaction> call, Throwable t) {
                 parseNetworkIssue(context, t.getMessage());
 
             }

@@ -23,4 +23,7 @@ public interface APIInterface {
     @GET("vegetables/getall/{page}/{size}")
     Call<APIResponseVegList> getVegetables(@Path("page") int page, @Path("size") int size);
 
+    @PUT("vegetables/calcVegetableCost/{vegetableId}")
+    Call<APIResponseVegTransaction> calculateVegetableCost(@Path("vegetableId") String vegetableId, @Body TaskRequest taskRequest);
+
 }
