@@ -1,7 +1,5 @@
 package com.example.vegprice.network;
 
-import com.example.vegprice.pojo.Vegetable;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -14,10 +12,10 @@ import retrofit2.http.Path;
 public interface APIInterface {
 
     @PUT("vegetables/updateVegetable/{vegetableId}")
-    Call<APIMessage> updateVegetable(@Path("vegetableId") String vegetableId, @Body Vegetable vegetable);
+    Call<APIMessage> updateVegetable(@Path("vegetableId") String vegetableId, @Body TaskRequest taskRequest);
 
     @POST("vegetables/addVegetable")
-    Call<APIMessage> addVegetable(@Body Vegetable vegetable);
+    Call<APIMessage> addVegetable(@Body TaskRequest taskRequest);
 
     @DELETE("vegetables/deleteVegetable/{vegetableId}")
     Call<APIMessage> deleteVegetable(@Path("vegetableId") String vegetableId);

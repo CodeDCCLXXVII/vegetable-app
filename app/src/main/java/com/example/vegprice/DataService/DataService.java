@@ -3,7 +3,6 @@ package com.example.vegprice.DataService;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.vegprice.R;
@@ -11,6 +10,7 @@ import com.example.vegprice.network.APIClient;
 import com.example.vegprice.network.APIInterface;
 import com.example.vegprice.network.APIMessage;
 import com.example.vegprice.network.APIResponseVegList;
+import com.example.vegprice.network.TaskRequest;
 import com.example.vegprice.pojo.Vegetable;
 import com.example.vegprice.ui.home.HomeFragment;
 
@@ -82,8 +82,10 @@ public class DataService {
     public static void addVegetable(final Context context, String title, String sms, Vegetable vegetable){
 
         invokeProgressBar(context, title, sms);
-
-        Call<APIMessage> apiResponseCall = apiInterface.addVegetable(vegetable);
+        TaskRequest taskRequest = new TaskRequest();
+        taskRequest.setName(vegetable.getName());
+        taskRequest.setVegPrice(vegetable.getPrice());
+        Call<APIMessage> apiResponseCall = apiInterface.addVegetable(taskRequest);
 
         apiResponseCall.enqueue(new Callback<APIMessage>() {
             @Override
@@ -124,7 +126,11 @@ public class DataService {
 
         invokeProgressBar(context, title, sms);
 
-        Call<APIMessage> apiResponseCall = apiInterface.updateVegetable(vegetable.getId(), vegetable);
+        TaskRequest taskRequest = new TaskRequest();
+        taskRequest.setName(vegetable.getName());
+        taskRequest.setVegPrice(vegetable.getPrice());
+
+        Call<APIMessage> apiResponseCall = apiInterface.updateVegetable(vegetable.getId(), taskRequest);
 
         apiResponseCall.enqueue(new Callback<APIMessage>() {
             @Override
